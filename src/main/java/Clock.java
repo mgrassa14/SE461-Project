@@ -97,9 +97,9 @@ public class Clock {
 	 * Checks to see if the clock is currently paused.
 	 * @return Whether or not this clock is paused.
 	 */
-	public boolean isPaused() {
-		return isPaused;
-	}
+//	public boolean isPaused() {
+//		return isPaused;
+//	}
 	
 	/**
 	 * Checks to see if a cycle has elapsed for this clock yet. If so,
@@ -122,9 +122,9 @@ public class Clock {
 	 * @return Whether or not a cycle has elapsed.
 	 * @see hasElapsedCycle
 	 */
-	public boolean peekElapsedCycle() {
-		return (elapsedCycles > 0);
-	}
+//	public boolean peekElapsedCycle() {
+//		return (elapsedCycles > 0);
+//	}
 	
 	/**
 	 * Calculates the current time in milliseconds using the computer's high

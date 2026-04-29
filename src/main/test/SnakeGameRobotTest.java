@@ -20,7 +20,7 @@ public class SnakeGameRobotTest {
         gameThread.start();
 
         // give time for window to load
-        Thread.sleep(500);
+        Thread.sleep(1000);
 
         // create robot
         Robot robot = new Robot();
@@ -30,19 +30,44 @@ public class SnakeGameRobotTest {
         // enter -> to start game
         robot.keyPress(KeyEvent.VK_ENTER);
         robot.keyRelease(KeyEvent.VK_ENTER);
+        Thread.sleep(1000);
         // right
         robot.keyPress(KeyEvent.VK_RIGHT);
         robot.keyRelease(KeyEvent.VK_RIGHT);
+        Thread.sleep(1000);
+        // down
+        robot.keyPress(KeyEvent.VK_DOWN);
+        robot.keyRelease(KeyEvent.VK_DOWN);
+        // left
+        robot.keyPress(KeyEvent.VK_LEFT);
+        robot.keyRelease(KeyEvent.VK_LEFT);
         // up
         robot.keyPress(KeyEvent.VK_UP);
         robot.keyRelease(KeyEvent.VK_UP);
+        Thread.sleep(1000);
         // pause
         robot.keyPress(KeyEvent.VK_P);   // pause
         robot.keyRelease(KeyEvent.VK_P);
+        Thread.sleep(2000);
         // unpause
         robot.keyPress(KeyEvent.VK_P);   // unpause
         robot.keyRelease(KeyEvent.VK_P);
-
+        Thread.sleep(3000);
+        // restart
+        robot.keyPress(KeyEvent.VK_ENTER);
+        robot.keyRelease(KeyEvent.VK_ENTER);
+        // pause
+        robot.keyPress(KeyEvent.VK_P);   // pause
+        robot.keyRelease(KeyEvent.VK_P);
+        Thread.sleep(2000);
+        // unpause
+        robot.keyPress(KeyEvent.VK_P);   // unpause
+        robot.keyRelease(KeyEvent.VK_P);
         Thread.sleep(1000);
+
+        Thread.sleep(-1);
     }
 }
+
+// eat the fruit
+// make delta negative?
