@@ -6,6 +6,8 @@ import static org.junit.Assert.*;
 import javax.swing.SwingUtilities;
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.io.ByteArrayOutputStream;
+import java.io.PrintStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -198,6 +200,65 @@ public class SnakeGameRobotTest {
         Thread.sleep(2000);
         assertTrue("snake should have crashed into the wall", game.isGameOver());
         assertFalse(game.isNewGame());
+    }
+
+    @Test
+    public void testMain() throws Exception {
+        // run main on a daemon thread since startGame()'s loop never returns
+        Thread mainThread = new Thread(() -> SnakeGame.main(new String[]{}));
+        mainThread.setDaemon(true);
+        mainThread.start();
+
+        // if both lines executed, the thread will be sitting inside startGame()
+        long deadline = System.currentTimeMillis() + 2000;
+        boolean inStartGame = false;
+        while (System.currentTimeMillis() < deadline && !inStartGame) {
+            for (StackTraceElement e : mainThread.getStackTrace()) {
+                if ("startGame".equals(e.getMethodName())) {
+                    inStartGame = true;
+                    break;
+                }
+            }
+            if (!inStartGame) Thread.sleep(20);
+        }
+        assertTrue("main should construct SnakeGame and enter startGame()", inStartGame);
+    }
+
+    @Test
+    public void testSleepInterruptedExceptionIsCaught() throws Exception {
+        // find the daemon thread spawned by setUp() that's running startGame()
+        Thread gameThread = null;
+        for (Thread t : Thread.getAllStackTraces().keySet()) {
+            if (!t.isDaemon() || t.getState() == Thread.State.TERMINATED) continue;
+            for (StackTraceElement e : t.getStackTrace()) {
+                if ("startGame".equals(e.getMethodName())) {
+                    gameThread = t;
+                    break;
+                }
+            }
+            if (gameThread != null) break;
+        }
+        assertNotNull("could not locate startGame thread", gameThread);
+
+        PrintStream originalErr = System.err;
+        ByteArrayOutputStream buf = new ByteArrayOutputStream();
+        System.setErr(new PrintStream(buf));
+        try {
+            // interrupt to force Thread.sleep() inside startGame() to throw
+            gameThread.interrupt();
+
+            // wait for the catch block's printStackTrace() to land on stderr
+            long deadline = System.currentTimeMillis() + 1000;
+            while (!buf.toString().contains("InterruptedException")
+                    && System.currentTimeMillis() < deadline) {
+                Thread.sleep(20);
+            }
+        } finally {
+            System.setErr(originalErr);
+        }
+
+        assertTrue("expected InterruptedException stack trace on stderr, got: " + buf,
+                buf.toString().contains("InterruptedException"));
     }
 
     @Test
